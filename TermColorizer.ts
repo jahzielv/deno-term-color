@@ -1,7 +1,7 @@
 /**
  * The eight basic colors supported by most terminals.
  */
-export enum TermColorCodes {
+export enum TermColors {
   Black,
   Red,
   Green,
@@ -15,8 +15,8 @@ export enum TermColorCodes {
  * Configures colors for a given string.
  */
 interface ColorSet {
-  fore?: TermColorCodes;
-  back?: TermColorCodes;
+  fore?: TermColors;
+  back?: TermColors;
 }
 
 /**
