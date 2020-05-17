@@ -1,12 +1,12 @@
 import * as Testing from "https://deno.land/std/testing/asserts.ts";
-import { TermColorizer, TermColors } from "./TermColorizer.ts";
+import { TermColorizer, AnsiColors } from "./TermColorizer.ts";
 
 const c = new TermColorizer();
 const enc = new TextEncoder();
 Deno.test({
   name: "basic one-color one-string test",
   fn: () => {
-    let greenStr = c.colorize("green", TermColors.Green);
+    let greenStr = c.colorize("green", AnsiColors.Green);
     console.log(greenStr);
     Testing.assertEquals(
       enc.encode(greenStr),
@@ -20,7 +20,7 @@ Deno.test({
   fn: () => {
     let redAndWhiteStr = c.colorize(
       "red and white",
-      { fore: TermColors.Red, back: TermColors.White },
+      { fore: AnsiColors.Red, back: AnsiColors.White },
     );
     console.log(redAndWhiteStr);
     Testing.assertEquals(
@@ -35,7 +35,7 @@ Deno.test({
   fn: () => {
     let str = c.colorize(
       "white front, SV back",
-      { fore: TermColors.White, back: "108,113,196" },
+      { fore: AnsiColors.White, back: "108,113,196" },
     );
     console.log(str);
   },
