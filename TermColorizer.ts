@@ -12,15 +12,16 @@ export enum TermColors {
   Cyan,
   White,
 }
+
 /**
  * Configures colors for a given string.
  */
 interface ColorSet {
-  fore?: TermColors;
-  back?: TermColors;
+  fore?: TermColors | string;
+  back?: TermColors | string;
 }
 
-function instanceOfColorSet(a: any): a is ColorSet {
+function instanceOfAnsiColorSet(a: any): a is ColorSet {
   return a.fore;
 }
 
@@ -37,6 +38,7 @@ export class TermColorizer {
   private fmtFrontAndBack =
     `${this.ESC}{0}{1}${this.END_COLORS}{2}${this.RESET}`;
   private fmtFront = `${this.ESC}{0}${this.END_COLORS}{1}${this.RESET}`;
+
   private baseColors = [
     `30`,
     `31`,
@@ -56,10 +58,28 @@ export class TermColorizer {
   }
 
   private parseColorSet(colors: ColorSet): [string, string] {
-    let fore = colors.fore ? this.baseColors[colors.fore] : "";
-    let back = colors.back
-      ? ";" + this.toBackground(this.baseColors[colors.back])
-      : "";
+    // let fore = colors.fore ? this.baseColors[colors.fore] : "";
+    // let back = colors.back
+    //   ? ";" + this.toBackground(this.baseColors[colors.back])
+    //   : "";
+    // return [fore, back];
+    let fore = "";
+    let back = "";
+    if (colors.fore) {
+      // RGB color
+      if (typeof colors.fore === "string") {
+        fore = this.rgbForeground(colors.fore);
+      } else {
+        fore = this.baseColors[colors.fore];
+      }
+    }
+    if (colors.back) {
+      if (typeof colors.back === "string") {
+        back = ";" + this.rgbBackground(colors.back);
+      } else {
+        back = ";" + this.toBackground(this.baseColors[colors.back]);
+      }
+    }
     return [fore, back];
   }
 
@@ -67,6 +87,12 @@ export class TermColorizer {
     let rgbSanitized = rgbStr.replace(/\s/g, "");
     let rgb = rgbSanitized.split(",");
     return `38;2;${rgb[0]};${rgb[1]};${rgb[2]}`;
+  }
+
+  private rgbBackground(rgbStr: string): string {
+    let rgbSanitized = rgbStr.replace(/\s/g, "");
+    let rgb = rgbSanitized.split(",");
+    return `48;2;${rgb[0]};${rgb[1]};${rgb[2]}`;
   }
 
   /**
@@ -87,24 +113,18 @@ export class TermColorizer {
    */
   public colorize(text: string, colors: ColorSet): string;
 
+  public colorize(text: string, color: string): string;
+
   public colorize(text: string, colorSpecifier: any): string {
-    if (instanceOfColorSet(colorSpecifier)) {
+    if (instanceOfAnsiColorSet(colorSpecifier)) {
       let foreBack = this.parseColorSet(colorSpecifier);
       return strfmt(this.fmtFrontAndBack, foreBack[0], foreBack[1], text);
+    }
+    if (typeof colorSpecifier === "string") {
+      return strfmt(this.fmtFront, this.rgbForeground(colorSpecifier), text);
     }
 
     let colorToAdd = this.baseColors[colorSpecifier];
     return strfmt(this.fmtFront, colorToAdd, text);
-  }
-
-  /**
-   * Adds the RGB color specified to `text` if 
-   * @param text The string to colorize
-   * @param rgbValues An RGB in the format `"<red>,<green>,<blue>"`
-   * @returns A string representing `text` with the specified color added.
-   */
-  public colorizeRGB(text: string, rgbValues: string): string {
-    let fore = this.rgbForeground(rgbValues);
-    return strfmt(this.fmtFront, fore, text);
   }
 }

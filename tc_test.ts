@@ -31,13 +31,31 @@ Deno.test({
 });
 
 Deno.test({
-  name: "RGB foreground test",
+  name: "ANSI fore, RGB back",
   fn: () => {
-    let rgbStr = c.colorizeRGB("solarized violet", "108, 113, 196");
-    console.log(rgbStr);
-    Testing.assertEquals(
-      enc.encode(rgbStr),
-      enc.encode("\u001b[38;2;108;113;196msolarized violet\u001b[39;49;m"),
+    let str = c.colorize(
+      "white front, SV back",
+      { fore: TermColors.White, back: "108,113,196" },
     );
+    console.log(str);
+  },
+});
+
+Deno.test({
+  name: "RGB fore, RGB back",
+  fn: () => {
+    let str = c.colorize(
+      "Solarized orange, Base 3",
+      { fore: "203, 75, 22", back: "253, 246, 227" },
+    );
+    console.log(str);
+  },
+});
+
+Deno.test({
+  name: "RGB fore",
+  fn: () => {
+    let str = c.colorize("Solarized orange", "203, 75, 22");
+    console.log(str);
   },
 });
