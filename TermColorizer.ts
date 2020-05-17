@@ -2,7 +2,7 @@ import { strfmt } from "../strformat/strformat.ts";
 /**
  * The eight basic colors supported by most terminals.
  */
-export enum TermColors {
+export enum AnsiColors {
   Black,
   Red,
   Green,
@@ -17,8 +17,8 @@ export enum TermColors {
  * Configures colors for a given string.
  */
 interface ColorSet {
-  fore?: TermColors | string;
-  back?: TermColors | string;
+  fore?: AnsiColors | string;
+  back?: AnsiColors | string;
 }
 
 function instanceOfAnsiColorSet(a: any): a is ColorSet {
@@ -58,11 +58,6 @@ export class TermColorizer {
   }
 
   private parseColorSet(colors: ColorSet): [string, string] {
-    // let fore = colors.fore ? this.baseColors[colors.fore] : "";
-    // let back = colors.back
-    //   ? ";" + this.toBackground(this.baseColors[colors.back])
-    //   : "";
-    // return [fore, back];
     let fore = "";
     let back = "";
     if (colors.fore) {
@@ -101,7 +96,7 @@ export class TermColorizer {
    * @param color One of the 8 portable ANSI colors.
    * @returns A string representing `text` with the specified color added.
    */
-  public colorize(text: string, color: TermColors): string;
+  public colorize(text: string, color: AnsiColors): string;
 
   /**
    * Adds the colors specified in `colorSet` to `text`.
