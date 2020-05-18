@@ -4,7 +4,7 @@ import { TermColorizer, AnsiColors } from "./TermColorizer.ts";
 const c = new TermColorizer();
 const enc = new TextEncoder();
 Deno.test({
-  name: "basic one-color one-string test",
+  name: "ANSI Fore",
   fn: () => {
     let greenStr = c.colorize("green", AnsiColors.Green);
     console.log(greenStr);
@@ -16,7 +16,7 @@ Deno.test({
 });
 
 Deno.test({
-  name: "foreground and background test",
+  name: "ANSI Fore, ANSI Back",
   fn: () => {
     let redAndWhiteStr = c.colorize(
       "red and white",
@@ -34,10 +34,28 @@ Deno.test({
   name: "ANSI fore, RGB back",
   fn: () => {
     let str = c.colorize(
-      "white front, SV back",
+      "White front, Solarized violet back",
       { fore: AnsiColors.White, back: "108,113,196" },
     );
     console.log(str);
+    Testing.assertEquals(
+      enc.encode(str),
+      enc.encode(
+        "\u001b[37;48;2;108;113;196mWhite front, Solarized violet back\u001b[39;49;m",
+      ),
+    );
+  },
+});
+
+Deno.test({
+  name: "RGB fore",
+  fn: () => {
+    let str = c.colorize("Solarized orange", "203, 75, 22");
+    console.log(str);
+    Testing.assertEquals(
+      enc.encode(str),
+      enc.encode("\u001b[38;2;203;75;22mSolarized orange\u001b[39;49;m"),
+    );
   },
 });
 
@@ -49,13 +67,11 @@ Deno.test({
       { fore: "203, 75, 22", back: "253, 246, 227" },
     );
     console.log(str);
-  },
-});
-
-Deno.test({
-  name: "RGB fore",
-  fn: () => {
-    let str = c.colorize("Solarized orange", "203, 75, 22");
-    console.log(str);
+    Testing.assertEquals(
+      enc.encode(str),
+      enc.encode(
+        "\u001b[38;2;203;75;22;48;2;253;246;227mSolarized orange, Base 3\u001b[39;49;m",
+      ),
+    );
   },
 });

@@ -101,13 +101,18 @@ export class TermColorizer {
   /**
    * Adds the colors specified in `colorSet` to `text`.
    * @param text The string you want to add color to.
-   * @param colorSpecifier Config object with optional properties that specifies which colors to add.
+   * @param colorSpecifier Config object with optional properties that specifies which colors to add. `colorSpecifier` members can be either RGB strings or a `TermColors` value.
    *                      - `fore`: the foreground color, i.e. the color of the actual text
    *                      - `back`: the background color
    * @returns A string representing `text` with the specified color(s) added.
    */
   public colorize(text: string, colors: ColorSet): string;
 
+  /**
+   * Adds the RGB color specified by `color` to `text`'s foreground.
+   * @param text The string you want to add color to.
+   * @param color The RGB value for the color you want to add to `text`
+   */
   public colorize(text: string, color: string): string;
 
   public colorize(text: string, colorSpecifier: any): string {
