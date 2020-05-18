@@ -1,4 +1,4 @@
-# deno-color-term
+# TermColorizer
 
 A Deno library to colorize outputs to stdout and stderr.
 
