@@ -1,5 +1,5 @@
 import * as Testing from "https://deno.land/std/testing/asserts.ts";
-import { TermColorizer, AnsiColors } from "./TermColorizer.ts";
+import { TermColorizer, AnsiColors } from "./termcolorizer.ts";
 
 const c = new TermColorizer();
 const enc = new TextEncoder();
