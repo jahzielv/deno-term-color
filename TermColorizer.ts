@@ -1,4 +1,4 @@
-import { strfmt } from "../strformat/strformat.ts";
+import { strfmt } from "https://raw.githubusercontent.com/jahzielv/strformat/master/strformat.ts";
 /**
  * The eight basic colors supported by most terminals.
  */
