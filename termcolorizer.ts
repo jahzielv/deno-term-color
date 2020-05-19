@@ -26,7 +26,34 @@ function instanceOfAnsiColorSet(a: any): a is ColorSet {
 }
 
 /**
- * TermColorizer adds colors to your terminal output!
+ * TermColorizer adds colors to your terminal output! 🎨
+ * Some definitions:
+ * - "Foreground": the color of the actual text itself.
+ * - "Background": the background color of the text.
+ * 
+ * `TermColorizer` has a `colorize` method which takes a string
+ * and a color specifier for that string. This color specifier can take
+ * several forms: it can be a single `AnsiColor`, an RGB string, or 
+ * a `ColorSet` object that specifies the foreground and/or background colors.
+ * `AnsiColor` is an enum that defines the 8 basic ANSI colors. Use these
+ * if you want the greatest portability across shells/terminal emulators.
+ * Most modern terminals support RGB color though! RGB strings are strings
+ * with three decimal numbers separated by commas, like so: "123, 456, 789"
+ * `TermColorizer` will strip the strings of whitespace, so spaces are allowed
+ * in RGB strings.
+ * 
+ * In a `ColorSet` object, you can mix and match RGB strings and `AnsiColor` values.
+ * This means that you could use an object like this:
+ * ```javascript
+ * {
+ *   fore: "123, 456, 789",
+ *   back: AnsiColors.Red
+ * }
+ * ```
+ * Both properties are optional.
+ * 
+ * If you pass in just an RGB string or just an `AnsiColor`, `colorize` will default
+ * to using that as a foreground color.
  */
 export class TermColorizer {
   private ESC = "\u001b[";
@@ -52,11 +79,13 @@ export class TermColorizer {
   constructor() {
   }
 
+  // Make an ANSI foreground color a background color.
   private toBackground(color: string): string {
     let colorNum = parseInt(color) + 10;
     return colorNum.toString();
   }
 
+  // Transform a `ColorSet` to its string representation.
   private parseColorSet(colors: ColorSet): [string, string] {
     let fore = "";
     let back = "";
@@ -78,12 +107,14 @@ export class TermColorizer {
     return [fore, back];
   }
 
+  // Turn an RGB string into a foreground color.
   private rgbForeground(rgbStr: string): string {
     let rgbSanitized = rgbStr.replace(/\s/g, "");
     let rgb = rgbSanitized.split(",");
     return `38;2;${rgb[0]};${rgb[1]};${rgb[2]}`;
   }
 
+  // Turn an RGB string into a background color.
   private rgbBackground(rgbStr: string): string {
     let rgbSanitized = rgbStr.replace(/\s/g, "");
     let rgb = rgbSanitized.split(",");
@@ -101,9 +132,10 @@ export class TermColorizer {
   /**
    * Adds the colors specified in `colorSet` to `text`.
    * @param text The string you want to add color to.
-   * @param colorSpecifier Config object with optional properties that specifies which colors to add. `colorSpecifier` members can be either RGB strings or a `TermColors` value.
-   *                      - `fore`: the foreground color, i.e. the color of the actual text
-   *                      - `back`: the background color
+   * @param colorSpecifier Config object with optional properties that specifies which colors to add.
+   * `colorSpecifier` members can be either RGB strings or a `AnsiColors` value.
+   * - `fore`: the foreground color, i.e. the color of the actual text
+   * - `back`: the background color
    * @returns A string representing `text` with the specified color(s) added.
    */
   public colorize(text: string, colors: ColorSet): string;
